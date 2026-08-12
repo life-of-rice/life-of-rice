@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Life of Rice</title>
+
+  <!-- Dongle + Solway via Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&family=Solway:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── Color tokens ─────────────────────────────────────────── */
+    :root {
+      --bg:    #FFFAF0;
+      --black: #161616;
+      --brown: #7B461D;
+      --red:   #EE5123;
+      --amber: #F9A046;
+      --blue:  #80BAE5;
+
+      --nav-h: 60px;
+      --sans:  'Dongle', sans-serif;
+      --serif: 'Solway', Georgia, serif;
+    }
+
+    /* ─── Reset ────────────────────────────────────────────────── */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      font-family: var(--sans);
+      font-size: 24px;
+      color: var(--black);
+    }
+
+    /* ─── Navigation ───────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 3rem;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+    }
+
+    /* Home / About / Shop — brown text, blue stroke on hover, no shape build */
+    .nav-link {
+      font-family: var(--sans);
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--brown);
+      text-decoration: none;
+      padding: 0.38rem 0.9rem;
+      border-radius: 9px;
+      border: 1px solid transparent;
+      display: inline-block;
+      transition:
+        background-color 100ms linear,
+        color            100ms linear;
+    }
+
+    .nav-link:hover {
+      background-color: var(--blue);
+      color: var(--bg);
+    }
+
+    /* Contact — blue bg / cream text; hover: ghost + blue stroke */
+    .nav-contact {
+      font-family: var(--sans);
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--bg);
+      background-color: var(--blue);
+      text-decoration: none;
+      padding: 0.1rem 0.8rem;
+      border-radius: 9px;
+      border: 1px solid transparent;
+      display: inline-block;
+      transition:
+        background-color 100ms linear,
+        color            100ms linear,
+        border-color     100ms linear;
+    }
+
+    .nav-contact:hover {
+      background-color: transparent;
+      color: var(--brown);
+      border-color: var(--blue);
+    }
+
+    /* ─── Hero ─────────────────────────────────────────────────── */
+    #hero {
+      height: calc(100vh - var(--nav-h));
+      display: flex;
+      align-items: center;
+      padding: 0 5rem 0 4rem;
+      gap: 3rem;
+    }
+
+    .hero-left {
+      flex: 55;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2.2rem;
+    }
+
+    .hero-right {
+      flex: 45;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-logo {
+      display: block;
+      width: auto;
+      height: auto;   /* overridden by JS once layout is known */
+      max-width: 100%;
+    }
+
+    /* ─── Tagline ──────────────────────────────────────────────── */
+    .tagline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    /* Line 1: Dongle, lighter kerning */
+    .tagline-line1 {
+      font-family: var(--sans);
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--black);
+      display: block;
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+    }
+
+    /* Keywords stacked, each on its own line, lighter Solway kerning */
+    .tagline-keywords {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    .keyword {
+      font-family: var(--serif);
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: 0.01em;
+      display: block;
+    }
+
+    #memory-span  { color: var(--brown); }
+    #culture-span { color: var(--red); }
+    #craft-span   { color: var(--amber); }
+
+    /* ── Craft letter split ──────────────────────────────────── */
+    .craft-letter {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* lh: in-flow, gives the wrapper its natural width.
+       clip-path hides it while preserving layout space. */
+    .craft-letter .lh {
+      display: inline-block;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      color: inherit;
+    }
+
+    /* rh: absolute overlay that drops into place (knife chop) */
+    .craft-letter .rh {
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      color: inherit;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    /* ─── CTA buttons ──────────────────────────────────────────── */
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .cta-btn {
+      font-family: var(--sans);
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--bg);
+      background-color: var(--blue);
+      border: 1px solid transparent;
+      border-radius: 9px;
+      padding: 0.1rem 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition:
+        background-color 100ms linear,
+        color            100ms linear,
+        border-color     100ms linear;
+    }
+
+    .cta-btn:hover {
+      background-color: transparent;
+      color: var(--brown);
+      border-color: var(--blue);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── Navigation ───────────────────────────────────────────── -->
+  <nav>
+    <div class="nav-left">
+      <a href="#"       class="nav-link">Home</a>
+      <a href="#about"  class="nav-link">About</a>
+      <a href="#shop"   class="nav-link">Shop</a>
+    </div>
+    <a href="#contact" class="nav-contact">Let's Shoot</a>
+  </nav>
+
+  <!-- ─── Hero ─────────────────────────────────────────────────── -->
+  <section id="hero">
+
+    <div class="hero-left">
+      <div class="tagline">
+        <span class="tagline-line1">Telling chef stories through</span>
+
+        <div class="tagline-keywords">
+          <span class="keyword" id="memory-span">memory</span>
+          <span class="keyword" id="culture-span">culture</span>
+          <span class="keyword" id="craft-span"><!-- letters injected by JS --></span>
+        </div>
+      </div>
+
+      <div class="hero-ctas">
+        <a href="#shop"    class="cta-btn">Shop Collection</a>
+        <a href="#contact" class="cta-btn">Contact Us</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <img id="hero-logo" class="hero-logo" src="logo.png" alt="Life of Rice logo">
+    </div>
+
+  </section>
+
+  <!-- ─── GSAP CDN ──────────────────────────────────────────────── -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ── 1. Build "craft" split-letter DOM ─────────────────────── */
+    const craftSpan = document.getElementById('craft-span');
+
+    Array.from('craft').forEach(char => {
+      const wrap = document.createElement('span');
+      wrap.className = 'craft-letter';
+
+      const lh = document.createElement('span');
+      lh.className = 'lh';
+      lh.textContent = char;
+
+      const rh = document.createElement('span');
+      rh.className = 'rh';
+      rh.textContent = char;
+
+      wrap.appendChild(lh);
+      wrap.appendChild(rh);
+      craftSpan.appendChild(wrap);
+    });
+
+    /* ── 2. Initial hidden states ──────────────────────────────── */
+    gsap.set('#hero-logo',     { opacity: 0, scale: 0.2, transformOrigin: 'center center' });
+    gsap.set('.tagline-line1', { opacity: 0 });
+    gsap.set('#memory-span',   { opacity: 0 });
+    gsap.set('#culture-span',  { clipPath: 'inset(100% 0 0 0)' });
+
+    document.querySelectorAll('.craft-letter .lh').forEach(el =>
+      gsap.set(el, { clipPath: 'inset(0 100% 0 0)' })
+    );
+    /* rh: clipped + lifted 6px so it drops into place on chop */
+    document.querySelectorAll('.craft-letter .rh').forEach(el =>
+      gsap.set(el, { clipPath: 'inset(0 0 0 100%)', y: -6 })
+    );
+
+    /* ── 3. Master timeline ────────────────────────────────────── */
+    /*
+      Sequence (all times relative to timeline start + 0.1 s delay):
+        t = 0.0 s  logo slides in (0.8 s)
+        t = 0.3 s  tagline fades in (0.35 s)
+        t = 0.5 s  "memory" fades in (200 ms after tagline starts)
+                   → memory circular drift also starts here (10 s, 10 rotations)
+        t = 4.5 s  "culture" curtain up — 4 s after memory first displays (0.8 s)
+        t = 8.5 s  "craft" knife chop — 4 s after culture first displays (~700 ms)
+
+      The memory drift runs concurrently with culture and craft — it
+      completes its 10th rotation at t ≈ 10.5 s and returns to origin.
+    */
+    const tl = gsap.timeline({ delay: 0.1 });
+
+    /* Logo: fade in (100 ms), then scale up from 20% → 100% (700 ms), total 800 ms */
+    tl.to('#hero-logo', { opacity: 1, duration: 0.1, ease: 'none'       }, 0);
+    tl.to('#hero-logo', { scale: 1,   duration: 0.7, ease: 'power2.out' }, 0.1);
+
+    /* Tagline fades in at 0.3 s */
+    tl.to('.tagline-line1', { opacity: 1, duration: 0.35, ease: 'none' }, 0.3);
+
+    /* "memory" fades in 800 ms after tagline is fully visible (t = 1.45 s) */
+    tl.to('#memory-span', { opacity: 1, duration: 0.25, ease: 'none' }, 1.45);
+
+    /* Memory circular drift — 2 px radius, constant 2π rad/s.
+       Two phases so the motion eases out exactly as craft completes (t = 6.15 s):
+         Phase 1: t = 1.45 → 5.55 s  (4.1 s, linear)    angle 0 → 8.2π
+         Phase 2: t = 5.55 → 6.15 s  (0.6 s, ease-out)  angle 8.2π → 8.8π
+       Δangle in phase 2 = 0.6π ensures the starting angular velocity (power2.out
+       initial slope = 2) matches the phase-1 rate: 2 × (0.6π) / 0.6 = 2π rad/s. */
+    const memoryEl   = document.getElementById('memory-span');
+    const driftProxy = { angle: 0 };
+
+    function applyDrift() {
+      const a = driftProxy.angle;
+      gsap.set(memoryEl, {
+        x: 2 * Math.sin(a),
+        y: 2 * (1 - Math.cos(a))
+      });
+    }
+
+    /* Phase 1 — constant speed */
+    tl.to(driftProxy, {
+      angle: Math.PI * 8.2,
+      duration: 4.1,
+      ease: 'none',
+      onUpdate: applyDrift
+    }, 1.45);
+
+    /* Phase 2 — ease out to rest, completes at t = 6.15 s (craft done) */
+    tl.to(driftProxy, {
+      angle: Math.PI * 8.8,
+      duration: 0.6,
+      ease: 'power2.out',
+      onUpdate: applyDrift
+    }, 5.55);
+
+    /* "culture" curtain up — t = 3.45 s (2 s after memory), 800 ms */
+    tl.to('#culture-span', {
+      clipPath: 'inset(0% 0 0 0)',
+      duration: 0.8,
+      ease: 'power2.out'
+    }, 3.45);
+
+    /* "craft" knife chop — t = 4.5 s (~700 ms total)
+       Each letter: left half snaps in instantly, right half drops in from above
+       (y: -6 → 0) with a fast power3.in — sharp kinetic chop motion.
+       Stagger: 130 ms between letters; right-half delay: 120 ms within each letter.
+       Total: 4 × 130 + 120 + 60 = 700 ms */
+    tl.addLabel('craftStart', 5.45);
+
+    document.querySelectorAll('.craft-letter').forEach((letterWrap, i) => {
+      const lh = letterWrap.querySelector('.lh');
+      const rh = letterWrap.querySelector('.rh');
+      const t  = i * 0.13; // 130 ms stagger
+
+      /* Left half: instant snap — knife arrives */
+      tl.set(lh, { clipPath: 'inset(0 50% 0 0)' }, `craftStart+=${t}`);
+
+      /* Right half: reveals + drops from above — knife chops down */
+      tl.to(rh, {
+        clipPath: 'inset(0 0 0 50%)',
+        y: 0,
+        duration: 0.06,
+        ease: 'power3.in'
+      }, `craftStart+=${t + 0.12}`);
+    });
+  </script>
+
+  <script>
+    /* ── Logo height: match top-of-tagline → bottom-of-CTAs ─────── */
+    const logo    = document.getElementById('hero-logo');
+    const tagline = document.querySelector('.tagline');
+    const ctas    = document.querySelector('.hero-ctas');
+
+    function syncLogoHeight() {
+      const top    = tagline.getBoundingClientRect().top;
+      const bottom = ctas.getBoundingClientRect().bottom;
+      const h      = bottom - top;
+      logo.style.height   = h + 'px';
+      logo.style.width    = 'auto';
+    }
+
+    /* Run after full layout + fonts are ready */
+    window.addEventListener('load',   syncLogoHeight);
+    window.addEventListener('resize', syncLogoHeight);
+  </script>
+
+
+  <!-- ─── About Section ──────────────────────────────────────────── -->
+  <section id="about">
+
+    <!-- Part 1: About the Series -->
+    <div class="about-inner">
+
+      <!-- Left: stacked image card -->
+      <div class="about-card-col">
+        <div class="about-card-stack" id="aboutCardStack">
+          <img class="about-card" id="aboutCard0" src="/images/about-1.jpg" alt="About image 1">
+          <img class="about-card" id="aboutCard1" src="/images/about-2.jpg" alt="About image 2">
+          <img class="about-card" id="aboutCard2" src="/images/about-3.jpg" alt="About image 3">
+        </div>
+      </div>
+
+      <!-- Right: text -->
+      <div class="about-text-col">
+        <h2 class="about-heading" id="aboutHeading">About the Series</h2>
+        <p class="about-p" id="aboutP1">Each episode of Life of Rice spotlights one chef, one restaurant, and one signature rice dish.</p>
+        <p class="about-p" id="aboutP2">Through an interview about the chef's relationship to rice and their culinary journey, the minute details in their cooking process are revealed and depicted through gritty kitchen footage of dish preparation.</p>
+      </div>
+
+    </div>
+
+    <!-- Part 2: A Glimpse into the Stories -->
+    <div class="glimpse-inner">
+      <h2 class="glimpse-heading" id="glimpseHeading">A Glimpse into the Stories</h2>
+      <div class="grains-row">
+        <div class="grain" id="grain0">
+          <video src="" autoplay muted loop playsinline class="grain-video"></video>
+        </div>
+        <div class="grain" id="grain1">
+          <video src="" autoplay muted loop playsinline class="grain-video"></video>
+        </div>
+        <div class="grain" id="grain2">
+          <video src="" autoplay muted loop playsinline class="grain-video"></video>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <style>
+    /* ─── About Section ──────────────────────────────────────────── */
+    #about {
+      background: var(--bg);
+    }
+
+    .about-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 100px 2rem 80px;
+      display: flex;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .about-card-col {
+      flex: 0 0 45%;
+      width: 45%;
+    }
+
+    .about-card-stack {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      border-radius: 8px;
+      overflow: visible;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    }
+
+    .about-card {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .about-text-col {
+      flex: 0 0 55%;
+      width: 55%;
+    }
+
+    .about-heading {
+      font-family: var(--serif);
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 20px;
+    }
+
+    .about-p {
+      font-family: var(--sans);
+      font-size: 20px;
+      color: var(--black);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .about-p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ─── Glimpse sub-section ───────────────────────────────────── */
+    .glimpse-inner {
+      padding: 80px 2rem 100px;
+      text-align: center;
+    }
+
+    .glimpse-heading {
+      font-family: var(--serif);
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 40px;
+    }
+
+    .grains-row {
+      position: relative;
+      height: 220px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .grain {
+      position: absolute;
+      top: calc(50% - 40px);
+      width: 260px;
+      height: 80px;
+      border-radius: 60px;
+      background: rgba(249, 160, 70, 0.3);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    #grain0 { left: 16.5%; }
+    #grain1 { left: 50%;   }
+    #grain2 { left: 83.5%; }
+
+    .grain-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      display: block;
+    }
+
+    /* ─── Mobile ─────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .about-inner {
+        flex-direction: column;
+        padding: 60px 1.5rem 60px;
+        gap: 32px;
+      }
+
+      .about-card-col,
+      .about-text-col {
+        flex: none;
+        width: 100%;
+      }
+
+      .grains-row {
+        height: 580px; /* 3 × 80px grains + gaps */
+      }
+
+      #grain0 { left: 50%; top: 20px;  }
+      #grain1 { left: 50%; top: 250px; }
+      #grain2 { left: 50%; top: 480px; }
+    }
+  </style>
+
+  <script>
+    /* ─── About Section: card stacking initial states ───────────── */
+    (function () {
+      /* Card stack: 0 = top/active, 1 = middle, 2 = bottom */
+      gsap.set('#aboutCard0', { zIndex: 3, x: 0,   y: 0,   scale: 1,    opacity: 1    });
+      gsap.set('#aboutCard1', { zIndex: 2, x: 6,   y: 6,   scale: 0.97, opacity: 0.85 });
+      gsap.set('#aboutCard2', { zIndex: 1, x: 12,  y: 12,  scale: 0.94, opacity: 0.7  });
+
+      /* ── Card swap on scroll ────────────────────────────────── */
+      const cards = [
+        document.getElementById('aboutCard0'),
+        document.getElementById('aboutCard1'),
+        document.getElementById('aboutCard2')
+      ];
+
+      /* Stack positions (index 0 = active/top, 1 = middle, 2 = bottom) */
+      const stackPos = [
+        { x: 0,  y: 0,  scale: 1,    opacity: 1,    zIndex: 3 },
+        { x: 6,  y: 6,  scale: 0.97, opacity: 0.85, zIndex: 2 },
+        { x: 12, y: 12, scale: 0.94, opacity: 0.7,  zIndex: 1 }
+      ];
+
+      /* currentOrder[i] = which stack position card i is in */
+      let activeTop = 0; /* index into cards[] that is currently on top */
+
+      function swapTop() {
+        const outCard  = cards[activeTop];
+        const nextTop  = (activeTop + 1) % 3;
+        const nextCard = cards[nextTop];
+        const thirdTop = (activeTop + 2) % 3;
+
+        /* Animate out the top card to the left */
+        gsap.to(outCard, { x: -60, opacity: 0, duration: 0.4, ease: 'power2.in',
+          onComplete: () => {
+            /* Reposition it to bottom of deck without animation */
+            gsap.set(outCard, stackPos[2]);
+          }
+        });
+
+        /* Bring next card to top */
+        gsap.to(nextCard, { x: 0, y: 0, scale: 1, opacity: 1, zIndex: 3, duration: 0.5, ease: 'power2.out' });
+
+        /* Step third card up to middle */
+        gsap.to(cards[thirdTop], { x: 6, y: 6, scale: 0.97, opacity: 0.85, zIndex: 2, duration: 0.5, ease: 'power2.out' });
+
+        activeTop = nextTop;
+      }
+
+      /* Pin the about section with 2 milestones × 300px each */
+      ScrollTrigger.create({
+        trigger: '#about',
+        start: 'top top',
+        end: '+=600',
+        pin: true,
+        onUpdate: (self) => {
+          const prog = self.progress; /* 0 → 1 over 600px */
+          if (prog >= 0.333 && !self._swap1) {
+            self._swap1 = true;
+            swapTop();
+          }
+          if (prog >= 0.667 && !self._swap2) {
+            self._swap2 = true;
+            swapTop();
+          }
+        }
+      });
+
+      /* ── Right column scroll-in animations ─────────────────── */
+      gsap.set('#aboutHeading', { opacity: 0, y: 20 });
+      gsap.set('#aboutP1',      { opacity: 0, y: 15 });
+      gsap.set('#aboutP2',      { opacity: 0, y: 15 });
+
+      ScrollTrigger.create({
+        trigger: '#aboutHeading',
+        start: 'top 75%',
+        once: true,
+        onEnter: () => {
+          gsap.to('#aboutHeading', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
+          gsap.to('#aboutP1',      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', delay: 0.15 });
+          gsap.to('#aboutP2',      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', delay: 0.30 });
+        }
+      });
+
+      /* ── Part 2: Glimpse scroll-in animations ───────────────── */
+      gsap.set('#glimpseHeading', { opacity: 0, y: 20 });
+      /* xPercent: -50 centers each grain on its left% anchor so width
+         changes during hover expand/collapse from the center, not the left edge */
+      gsap.set('.grain', { xPercent: -50 });
+      /* Staggered starting offsets: left grain high, middle low, right high */
+      gsap.set('#grain0', { opacity: 0, y: -40, rotate: -12 });
+      gsap.set('#grain1', { opacity: 0, y:  60, rotate:  10 });
+      gsap.set('#grain2', { opacity: 0, y: -25, rotate: -8  });
+
+      ScrollTrigger.create({
+        trigger: '#glimpseHeading',
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
+          gsap.to('#glimpseHeading', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
+          gsap.to('#grain0', { opacity: 1, y: 0, rotate: 0, duration: 0.6, ease: 'power2.out', delay: 0.1 });
+          gsap.to('#grain1', { opacity: 1, y: 0, rotate: 0, duration: 0.6, ease: 'power2.out', delay: 0.3 });
+          gsap.to('#grain2', { opacity: 1, y: 0, rotate: 0, duration: 0.6, ease: 'power2.out', delay: 0.5 });
+        }
+      });
+
+      /* ── Grain hover morph ──────────────────────────────────── */
+      document.querySelectorAll('.grain').forEach(grain => {
+        const video = grain.querySelector('.grain-video');
+
+        grain.addEventListener('mouseenter', () => {
+          gsap.to(grain, { width: 180, height: 320, borderRadius: 12, duration: 0.45, ease: 'power2.out' });
+          gsap.to(video, { opacity: 1, duration: 0.3 });
+        });
+
+        grain.addEventListener('mouseleave', () => {
+          gsap.to(grain, { width: 260, height: 80, borderRadius: 60, duration: 0.4, ease: 'power2.inOut' });
+          gsap.to(video, { opacity: 0, duration: 0.2 });
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>
