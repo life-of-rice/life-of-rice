@@ -448,16 +448,41 @@
     <!-- Part 2: A Glimpse into the Stories -->
     <div class="glimpse-inner">
       <h2 class="glimpse-heading" id="glimpseHeading">A Glimpse into the Stories</h2>
-      <div class="grains-row">
-        <div class="grain" id="grain0">
-          <video src="" autoplay muted loop playsinline class="grain-video"></video>
+      <div class="episodes-row">
+
+        <div class="episode" id="ep0">
+          <div class="ep-card">
+            <img src="images/fan-fried-rice-bar.webp" class="ep-img" alt="Fan Fried Rice Bar">
+            <div class="ep-overlay">
+              <h3 class="ep-name-overlay">Fan Fried Rice Bar</h3>
+              <p class="ep-bio">A Taiwanese street food spot in Brooklyn where fried rice takes center stage — equal parts comfort food and craft.</p>
+            </div>
+          </div>
+          <span class="ep-name-label">Fan Fried Rice Bar</span>
         </div>
-        <div class="grain" id="grain1">
-          <video src="" autoplay muted loop playsinline class="grain-video"></video>
+
+        <div class="episode" id="ep1">
+          <div class="ep-card">
+            <img src="images/indian-table.webp" class="ep-img" alt="Indian Table">
+            <div class="ep-overlay">
+              <h3 class="ep-name-overlay">Indian Table</h3>
+              <p class="ep-bio">A neighborhood gem bringing the warmth of Indian home cooking through a chef's deep relationship with rice and memory.</p>
+            </div>
+          </div>
+          <span class="ep-name-label">Indian Table</span>
         </div>
-        <div class="grain" id="grain2">
-          <video src="" autoplay muted loop playsinline class="grain-video"></video>
+
+        <div class="episode" id="ep2">
+          <div class="ep-card">
+            <img src="images/nin-hao.webp" class="ep-img" alt="Nin Hao">
+            <div class="ep-overlay">
+              <h3 class="ep-name-overlay">Nin Hao</h3>
+              <p class="ep-bio">A celebrated Taiwanese-American restaurant where each bowl of rice carries the weight of memory, culture, and craft.</p>
+            </div>
+          </div>
+          <span class="ep-name-label">Nin Hao</span>
         </div>
+
       </div>
     </div>
 
@@ -540,34 +565,75 @@
       margin-bottom: 40px;
     }
 
-    .grains-row {
-      position: relative;
-      height: 220px;
+    .episodes-row {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
       max-width: 1000px;
       margin: 0 auto;
+      align-items: flex-start;
     }
 
-    .grain {
-      position: absolute;
-      top: calc(50% - 40px);
-      width: 260px;
-      height: 80px;
-      border-radius: 60px;
-      background: rgba(249, 160, 70, 0.3);
+    .episode {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .ep-card {
+      width: 160px;
+      height: 160px;
+      border-radius: 80px;
       overflow: hidden;
+      position: relative;
       cursor: pointer;
+      flex-shrink: 0;
     }
 
-    #grain0 { left: 16.5%; }
-    #grain1 { left: 50%;   }
-    #grain2 { left: 83.5%; }
-
-    .grain-video {
+    .ep-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0;
       display: block;
+    }
+
+    .ep-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(22, 22, 22, 0.62);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 18px;
+      opacity: 0;
+    }
+
+    .ep-name-overlay {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--bg);
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .ep-bio {
+      font-family: var(--sans);
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--bg);
+      line-height: 1.45;
+      opacity: 0;
+    }
+
+    .ep-name-label {
+      font-family: var(--sans);
+      font-size: 19px;
+      font-weight: 500;
+      color: var(--brown);
+      text-align: center;
+      max-width: 160px;
     }
 
     /* ─── Mobile ─────────────────────────────────────────────────── */
@@ -584,13 +650,11 @@
         width: 100%;
       }
 
-      .grains-row {
-        height: 580px; /* 3 × 80px grains + gaps */
+      .episodes-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
       }
-
-      #grain0 { left: 50%; top: 20px;  }
-      #grain1 { left: 50%; top: 250px; }
-      #grain2 { left: 50%; top: 480px; }
     }
   </style>
 
@@ -679,13 +743,9 @@
 
       /* ── Part 2: Glimpse scroll-in animations ───────────────── */
       gsap.set('#glimpseHeading', { opacity: 0, y: 20 });
-      /* xPercent: -50 centers each grain on its left% anchor so width
-         changes during hover expand/collapse from the center, not the left edge */
-      gsap.set('.grain', { xPercent: -50 });
-      /* Staggered starting offsets: left grain high, middle low, right high */
-      gsap.set('#grain0', { opacity: 0, y: -40, rotate: -12 });
-      gsap.set('#grain1', { opacity: 0, y:  60, rotate:  10 });
-      gsap.set('#grain2', { opacity: 0, y: -25, rotate: -8  });
+      gsap.set('#ep0', { opacity: 0, y: 30 });
+      gsap.set('#ep1', { opacity: 0, y: 30 });
+      gsap.set('#ep2', { opacity: 0, y: 30 });
 
       ScrollTrigger.create({
         trigger: '#glimpseHeading',
@@ -693,24 +753,31 @@
         once: true,
         onEnter: () => {
           gsap.to('#glimpseHeading', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
-          gsap.to('#grain0', { opacity: 1, y: 0, rotate: 0, duration: 0.6, ease: 'power2.out', delay: 0.1 });
-          gsap.to('#grain1', { opacity: 1, y: 0, rotate: 0, duration: 0.6, ease: 'power2.out', delay: 0.3 });
-          gsap.to('#grain2', { opacity: 1, y: 0, rotate: 0, duration: 0.6, ease: 'power2.out', delay: 0.5 });
+          gsap.to('#ep0', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.15 });
+          gsap.to('#ep1', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.30 });
+          gsap.to('#ep2', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.45 });
         }
       });
 
-      /* ── Grain hover morph ──────────────────────────────────── */
-      document.querySelectorAll('.grain').forEach(grain => {
-        const video = grain.querySelector('.grain-video');
+      /* ── Episode card hover morph ──────────────────────────── */
+      document.querySelectorAll('.episode').forEach(ep => {
+        const card    = ep.querySelector('.ep-card');
+        const overlay = ep.querySelector('.ep-overlay');
+        const bio     = ep.querySelector('.ep-bio');
+        const label   = ep.querySelector('.ep-name-label');
 
-        grain.addEventListener('mouseenter', () => {
-          gsap.to(grain, { width: 180, height: 320, borderRadius: 12, duration: 0.45, ease: 'power2.out' });
-          gsap.to(video, { opacity: 1, duration: 0.3 });
+        ep.addEventListener('mouseenter', () => {
+          gsap.to(card,    { width: 260, height: 360, borderRadius: 16, duration: 0.45, ease: 'power2.out' });
+          gsap.to(overlay, { opacity: 1, duration: 0.3, delay: 0.1 });
+          gsap.to(bio,     { opacity: 1, duration: 0.3, delay: 0.2 });
+          gsap.to(label,   { opacity: 0, duration: 0.2 });
         });
 
-        grain.addEventListener('mouseleave', () => {
-          gsap.to(grain, { width: 260, height: 80, borderRadius: 60, duration: 0.4, ease: 'power2.inOut' });
-          gsap.to(video, { opacity: 0, duration: 0.2 });
+        ep.addEventListener('mouseleave', () => {
+          gsap.to(card,    { width: 160, height: 160, borderRadius: 80, duration: 0.4, ease: 'power2.inOut' });
+          gsap.to(overlay, { opacity: 0, duration: 0.2 });
+          gsap.to(bio,     { opacity: 0, duration: 0.15 });
+          gsap.to(label,   { opacity: 1, duration: 0.3, delay: 0.15 });
         });
       });
     })();
